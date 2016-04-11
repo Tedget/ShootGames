@@ -1,0 +1,12 @@
+name: ShootGames
+version: 1.3.6
+author: Affe480, Qwerty89983nr2
+main: main.ShootGames
+commands:
+  sg:
+    description: General ShootGames command
+    usage: Bitte guck dir die Homepage an 
+    aliases: [tbe, tbeapons]
+  addpoint:
+    description: Add spawnpoints.
+    usage: /addpoint
