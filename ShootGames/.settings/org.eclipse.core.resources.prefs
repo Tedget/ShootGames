@@ -1,3 +1,3 @@
 eclipse.preferences.version=1
-encoding//src/Listener/WeaponListener.java=UTF-8
-encoding//src/Weapons/Gun.java=UTF-8
+encoding//src/de/tedget/shootgames/listener/WeaponListener.java=UTF-8
+encoding//src/de/tedget/shootgames/weapons/Gun.java=UTF-8
