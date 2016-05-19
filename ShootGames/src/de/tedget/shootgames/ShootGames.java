@@ -52,8 +52,7 @@ public class ShootGames extends JavaPlugin
   public int knifeBackstabDamage;
   public ItemStack knifeIte;
 
-  public void onEnable()
-  {
+  public void onEnable() {
     if (!manageConfigs()) {
       return;
     }
@@ -64,13 +63,11 @@ public class ShootGames extends JavaPlugin
     this.log.log(Level.INFO, "[ShootGames] Plugin Version " + getDescription().getVersion() + " activated!");
   }
 
-  public void onDisable()
-  {
+  public void onDisable() {
     this.log.log(Level.INFO, "[ShootGames] Plugin Deaktiviert");
   }
 
-  public void loadConfig()
-  {
+  public void loadConfig() {
     if (new File("plugins/ShootGames/config.yml").exists()) {
       this.log.log(Level.INFO, "[ShootGames] config.yml ist geloadet");
     } else {
@@ -79,8 +76,7 @@ public class ShootGames extends JavaPlugin
     }
   }
 
-  public boolean manageConfigs()
-  {
+  public boolean manageConfigs() {
     loadConfig();
     try {
       this.gl = new GunsLoader(this);
@@ -102,8 +98,7 @@ public class ShootGames extends JavaPlugin
     return true;
   }
 
-  public void initializeStuff()
-  {
+  public void initializeStuff() {
 	
     Configuration config = getConfig();
 
@@ -137,13 +132,11 @@ public class ShootGames extends JavaPlugin
     this.knifeIte = new WeaponUtil(this).getItem(config.getString("Knife.Item"));
   }
 
-  public boolean worldGuardInstalled()
-  {
+  public boolean worldGuardInstalled() {
     return (getWorldGuard() != null) && (getWorldEdit() != null);
   }
 
-  public WorldGuardPlugin getWorldGuard()
-  {
+  public WorldGuardPlugin getWorldGuard() {
     Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
     if ((plugin == null) || (!(plugin instanceof WorldGuardPlugin))) {
       return null;
@@ -151,8 +144,7 @@ public class ShootGames extends JavaPlugin
     return (WorldGuardPlugin)plugin;
   }
 
-  public WorldEditPlugin getWorldEdit()
-  {
+  public WorldEditPlugin getWorldEdit() {
     Plugin plugin = getServer().getPluginManager().getPlugin("WorldEdit");
     if ((plugin == null) || (!(plugin instanceof WorldEditPlugin))) {
       return null;
@@ -160,8 +152,7 @@ public class ShootGames extends JavaPlugin
     return (WorldEditPlugin)plugin;
   }
 
-  public Configuration getGuns()
-  {
+  public Configuration getGuns() {
     this.gl.load();
     return this.gl.getConfig();
   }
@@ -171,8 +162,7 @@ public class ShootGames extends JavaPlugin
     return this.grl.getConfig();
   }
 
-  public void registerStuff()
-  {
+  public void registerStuff() {
     this.wu = new WeaponUtil(this);
     this.wl = new WeaponListener(this);
     this.sppt = new SpawnPoints(this);

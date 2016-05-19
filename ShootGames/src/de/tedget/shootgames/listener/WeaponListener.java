@@ -44,19 +44,16 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffectType;
 
 public class WeaponListener
-  implements Listener
-{
+  implements Listener {
   ShootGames plugin;
   
-  public WeaponListener(ShootGames shootgames)
-  {
+  public WeaponListener(ShootGames shootgames) {
     this.plugin = shootgames;
     shootgames.getServer().getPluginManager().registerEvents(this, shootgames);
   }
   
   @EventHandler(priority=EventPriority.HIGH)
-  public void onPlayerInteract(PlayerInteractEvent event)
-  {
+  public void onPlayerInteract(PlayerInteractEvent event) {
     Action action = event.getAction();
     if ((action != Action.RIGHT_CLICK_AIR) && (action != Action.RIGHT_CLICK_BLOCK) && (action != Action.LEFT_CLICK_AIR) && (action != Action.LEFT_CLICK_BLOCK)) {
       return;
@@ -73,8 +70,7 @@ public class WeaponListener
     if ((!p.hasPermission("shootgames.use." + weapon)) && (!p.hasPermission("shootgames.use.all"))) {
       return;
     }
-    if (this.plugin.noPvpDisabled)
-    {
+    if (this.plugin.noPvpDisabled) {
       if (!p.getWorld().getPVP())
       {
         if (this.plugin.disabledMessage) {
@@ -82,8 +78,7 @@ public class WeaponListener
         }
         return;
       }
-      if (this.plugin.hasWorldGuard)
-      {
+      if (this.plugin.hasWorldGuard) {
         RegionManager rm = this.plugin.getWorldGuard().getRegionManager(p.getWorld());
         if (!rm.getApplicableRegions(p.getLocation()).allows(DefaultFlag.PVP))
         {
@@ -100,8 +95,7 @@ public class WeaponListener
     }
     event.setCancelled(true);
     boolean gun = this.plugin.wu.isGun(weapon);
-    if (aiming)
-    {
+    if (aiming) {
       if (!gun) {
         return;
       }
@@ -109,8 +103,7 @@ public class WeaponListener
       g.scope();
       return;
     }
-    if (gun)
-    {
+    if (gun) {
       Gun g = new Gun(weapon, p, this.plugin, p.getItemInHand());
       if (p.isSneaking())
       {
@@ -125,10 +118,9 @@ public class WeaponListener
   }
   
   @EventHandler(priority=EventPriority.NORMAL)
-  public void onProjectileHit(ProjectileHitEvent event)
-  {
+  public void onProjectileHit(ProjectileHitEvent event) {
     Projectile pr = event.getEntity();
-    Entity shooter = pr.getShooter();
+    Entity shooter = (Entity) pr.getShooter();
     if (!(shooter instanceof Player)) {
       return;
     }
@@ -141,8 +133,7 @@ public class WeaponListener
     if (pr.getType() != EntityType.fromName(g.getBullet())) {
       return;
     }
-    if (g.willExplode())
-    {
+    if (g.willExplode()) {
       Location loc = pr.getLocation();
       loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), 5.0F, false, this.plugin.blockDamage);
       List<Entity> elist = pr.getNearbyEntities(g.getExplosionRange(), g.getExplosionRange(), g.getExplosionRange());
@@ -150,10 +141,8 @@ public class WeaponListener
       {
         Entity n = (Entity)elist.get(t);
         boolean damage = true;
-        if ((n instanceof Player))
-        {
-          if ((this.plugin.noPvpDisabled) && (this.plugin.hasWorldGuard))
-          {
+        if ((n instanceof Player)) {
+          if ((this.plugin.noPvpDisabled) && (this.plugin.hasWorldGuard)) {
             RegionManager rm = this.plugin.getWorldGuard().getRegionManager(p.getWorld());
             if (!rm.getApplicableRegions(n.getLocation()).allows(DefaultFlag.PVP)) {
               damage = false;
@@ -163,8 +152,7 @@ public class WeaponListener
             damage = false;
           }
         }
-        if ((this.plugin.wu.isValidEntity(n)) && (damage))
-        {
+        if ((this.plugin.wu.isValidEntity(n)) && (damage)) {
           ((LivingEntity)n).setMetadata("DamagerWeaponName", new FixedMetadataValue(this.plugin, g.getName()));
           ((LivingEntity)n).damage(g.getExplosionDamage(), p);
         }
@@ -177,14 +165,12 @@ public class WeaponListener
   }
   
   @EventHandler(priority=EventPriority.NORMAL)
-  public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
-  {
+  public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
     if (!this.plugin.wu.isValidEntity(event.getEntity())) {
       return;
     }
     LivingEntity e = (LivingEntity)event.getEntity();
-    if (event.getCause() != EntityDamageEvent.DamageCause.PROJECTILE)
-    {
+    if (event.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {
       if ((this.plugin.knifeEnabled) && (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) && ((event.getDamager() instanceof Player)))
       {
         Player d = (Player)event.getDamager();
@@ -229,12 +215,9 @@ public class WeaponListener
       }
     }
     int damage = g.getDamage();
-    if (this.plugin.wu.isHeadshot(pr, e))
-    {
-      if ((e instanceof Player))
-      {
-        if (this.plugin.headshotMessage)
-        {
+    if (this.plugin.wu.isHeadshot(pr, e)) {
+      if ((e instanceof Player)) {
+        if (this.plugin.headshotMessage) {
           Player ep = (Player)e;
           p.sendMessage(this.plugin.headshotShooter.replace("%player%", ep.getName()));
           ep.sendMessage(this.plugin.headshotVictim.replace("%player%", p.getName()));
@@ -246,16 +229,13 @@ public class WeaponListener
       }
       damage += g.getHeadshotBonus();
     }
-    else if ((e instanceof Player))
-    {
-      e.setMetadata("Headshot", new FixedMetadataValue(this.plugin, Boolean.valueOf(false)));
-    }
+    else if ((e instanceof Player)) {
+      e.setMetadata("Headshot", new FixedMetadataValue(this.plugin, Boolean.valueOf(false))); }
     event.setDamage(damage);
   }
   
   @EventHandler(priority=EventPriority.NORMAL)
-  public void onPlayerPickupItem(PlayerPickupItemEvent event)
-  {
+  public void onPlayerPickupItem(PlayerPickupItemEvent event) {
     ItemStack i = event.getItem().getItemStack();
     if (!i.hasItemMeta()) {
       return;
@@ -272,8 +252,7 @@ public class WeaponListener
   }
   
   @EventHandler(priority=EventPriority.NORMAL)
-  public void onEntityDamage(EntityDamageEvent event)
-  {
+  public void onEntityDamage(EntityDamageEvent event) {
     if (event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) {
       return;
     }
@@ -290,11 +269,9 @@ public class WeaponListener
   }
   
   @EventHandler(priority=EventPriority.NORMAL)
-  public void onPlayerItemHeld(PlayerItemHeldEvent event)
-  {
+  public void onPlayerItemHeld(PlayerItemHeldEvent event) {
     Player p = event.getPlayer();
-    if ((p.getMetadata("Aiming").size() > 0) && (((Boolean)((MetadataValue)p.getMetadata("Aiming").get(0)).value()).booleanValue()))
-    {
+    if ((p.getMetadata("Aiming").size() > 0) && (((Boolean)((MetadataValue)p.getMetadata("Aiming").get(0)).value()).booleanValue())) {
       p.removePotionEffect(PotionEffectType.SPEED);
       p.setMetadata("Aiming", new FixedMetadataValue(this.plugin, Boolean.valueOf(false)));
     }
@@ -312,18 +289,15 @@ public class WeaponListener
     }
     boolean gun = this.plugin.wu.isGun(weapon);
     p.getWorld().playSound(p.getLocation(), Sound.BAT_TAKEOFF, 0.5F, 5.0F);
-    if (gun)
-    {
+    if (gun) {
       Gun g = new Gun(weapon, p, this.plugin, i);
       g.refreshItem(i);
       return;
     }
-    if (weapon.equalsIgnoreCase("Knife"))
-    {
+    if (weapon.equalsIgnoreCase("Knife")) {
       p.getInventory().setItem(slot, this.plugin.wu.rename(i, "§b§oKnife"));
     }
-    else
-    {
+    else {
       Grenade gr = new Grenade(weapon, p, this.plugin);
       gr.refreshItem();
       return;
@@ -331,8 +305,7 @@ public class WeaponListener
   }
   
   @EventHandler(priority=EventPriority.HIGH)
-  public void onPlayerDeath(PlayerDeathEvent event)
-  {
+  public void onPlayerDeath(PlayerDeathEvent event) {
     if (!this.plugin.customDeath) {
       return;
     }
@@ -341,8 +314,7 @@ public class WeaponListener
       return;
     }
     EntityDamageByEntityEvent e = (EntityDamageByEntityEvent)p.getLastDamageCause();
-    if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE)
-    {
+    if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
       Projectile pr = (Projectile)e.getDamager();
       if (!(pr.getShooter() instanceof Player)) {
         return;
@@ -353,8 +325,7 @@ public class WeaponListener
       }
       String weapon = (String)((MetadataValue)pr.getMetadata("WeaponName").get(0)).value();
       String addition = "";
-      if (p.getMetadata("Headshot").size() > 0)
-      {
+      if (p.getMetadata("Headshot").size() > 0) {
         boolean headshot = ((Boolean)((MetadataValue)p.getMetadata("Headshot").get(0)).value()).booleanValue();
         if (headshot) {
           addition = "§4✛";
@@ -362,9 +333,7 @@ public class WeaponListener
       }
       event.setDeathMessage(this.plugin.death.replace("%killer%", k.getName()).replace("%player%", p.getName() + addition).replace("%weapon%", weapon));
       pr.removeMetadata("WeaponName", this.plugin);
-    }
-    else
-    {
+    } else {
       if (!(e.getDamager() instanceof Player)) {
         return;
       }
@@ -379,8 +348,7 @@ public class WeaponListener
   }
   
   @EventHandler(priority=EventPriority.NORMAL)
-  public void onPlayerEggThrow(PlayerEggThrowEvent event)
-  {
+  public void onPlayerEggThrow(PlayerEggThrowEvent event) {
     Projectile pr = event.getEgg();
     if (pr.getMetadata("WeaponName").size() == 0) {
       return;

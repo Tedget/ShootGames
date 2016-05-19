@@ -28,8 +28,7 @@ public class SpawnPoints implements CommandExecutor, Listener{
 	
 	ShootGames plugin;
 	
-	public SpawnPoints(ShootGames shootgames)
-	  {
+	public SpawnPoints(ShootGames shootgames) {
 	    this.plugin = shootgames;
 	    shootgames.getServer().getPluginManager().registerEvents(this, shootgames);
 	  }
@@ -37,47 +36,38 @@ public class SpawnPoints implements CommandExecutor, Listener{
 	private YamlConfiguration config;
 	private File configFile;
 	
-	public YamlConfiguration getConfig()
-	  {
+	public YamlConfiguration getConfig() {
 	    return this.config;
 	  }
 	  
-	  public void save()
-	  {
+	  public void save() {
 	    try
 	    {
 	      this.config.save(this.configFile);
 	    }
-	    catch (IOException e)
-	    {
+	    catch (IOException e) {
 	      e.printStackTrace();
 	    }
 	  }
 	  
-	  public void load()
-	  {
+	  public void load() {
 	    this.configFile = new File("plugins/ShootGames/spawnpoints.yml");
 	    if (!this.configFile.exists()) {
-	      try
-	      {
+	      try {
 	        this.configFile.createNewFile();
 	      }
-	      catch (IOException e)
-	      {
+	      catch (IOException e) {
 	        e.printStackTrace();
 	      }
 	    }
 	    this.config = new YamlConfiguration();
-	    try
-	    {
+	    try {
 	      this.config.load(this.configFile);
 	    }
-	    catch (IOException e)
-	    {
+	    catch (IOException e) {
 	      e.printStackTrace();
 	    }
-	    catch (InvalidConfigurationException e)
-	    {
+	    catch (InvalidConfigurationException e) {
 	      e.printStackTrace();
 	    }
 	  }
@@ -116,8 +106,7 @@ public class SpawnPoints implements CommandExecutor, Listener{
 		}
 		else{
 			tasks.put("1", Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
-				public void run()
-				{
+				public void run() {
 					int players = Bukkit.getOnlinePlayers().length;
 					if (players >= 8){
 						if (zeit >= 30){

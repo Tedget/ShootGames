@@ -31,8 +31,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
-public class Grenade
-{
+public class Grenade {
   private ItemStack grenIte;
   private List<String> lore = new ArrayList();
   private boolean smoke;
@@ -51,8 +50,7 @@ public class Grenade
   private long cooldownMillis;
   private boolean sticky;
   
-  public Grenade(String name, Player holder, ShootGames ShootGames)
-  {
+  public Grenade(String name, Player holder, ShootGames ShootGames) {
     this.name = name;
     this.index = name;
     this.holder = holder;
@@ -62,8 +60,7 @@ public class Grenade
     initialize();
   }
   
-  private void initialize()
-  {
+  private void initialize() {
     this.grenIte = getItem(this.config.getString(this.index + ".General.Item"));
     prepareGrenadeItem();
     this.selfImmunity = this.config.getBoolean(this.index + ".General.SelfImmunity");
@@ -83,21 +80,18 @@ public class Grenade
     this.cooldownMillis = getCooldownMillis();
   }
   
-  private long getCooldownMillis()
-  {
+  private long getCooldownMillis() {
     if (this.holder.getMetadata("WeaponCooldown." + this.name).size() > 0) {
       return ((Long)((MetadataValue)this.holder.getMetadata("WeaponCooldown." + this.name).get(0)).value()).longValue();
     }
     return System.currentTimeMillis();
   }
   
-  private boolean hasUnlimited()
-  {
+  private boolean hasUnlimited() {
     return (this.holder.getGameMode() == GameMode.CREATIVE) && (this.plugin.creativeUnlimited);
   }
   
-  public void throwGrenade()
-  {
+  public void throwGrenade() {
     if (this.cooldownMillis > System.currentTimeMillis()) {
       return;
     }
@@ -115,22 +109,16 @@ public class Grenade
     observeGrenade(ite, this.expDelay);
   }
   
-  public void observeGrenade(final Item ite, final int remDelay)
-  {
+  public void observeGrenade(final Item ite, final int remDelay) {
     if (ite.isDead()) {
       return;
     }
-    this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
-    {
-      public void run()
-      {
+    this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+      public void run() {
         int newDelay = remDelay - 1;
-        if (newDelay <= 0)
-        {
+        if (newDelay <= 0) {
           Grenade.this.explode(ite);
-        }
-        else
-        {
+        } else {
           if (remDelay == 1) {
             ite.getWorld().playSound(ite.getLocation(), Sound.FUSE, 1.0F, 5.0F);
           }
@@ -140,13 +128,11 @@ public class Grenade
     }, 20L);
   }
   
-  private void removeGrenade()
-  {
+  private void removeGrenade() {
     ItemStack hand = this.holder.getItemInHand();
     int amount = hand.getAmount();
     amount--;
-    if (amount == 0)
-    {
+    if (amount == 0) {
       this.holder.setItemInHand(new ItemStack(0));
       return;
     }
@@ -154,33 +140,24 @@ public class Grenade
     this.holder.setItemInHand(hand);
   }
   
-  public void observeStickyGrenade(final Item ite)
-  {
+  public void observeStickyGrenade(final Item ite) {
     if (ite.isDead()) {
       return;
     }
     final String fHname = this.hname;
-    this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
-    {
-      public void run()
-      {
-        if (!ite.isDead())
-        {
+    this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+      public void run()  {
+        if (!ite.isDead()) {
           boolean gotTarget = false;
           List<Entity> elist = ite.getNearbyEntities(0.2D, 0.2D, 0.2D);
-          if (elist.size() >= 1)
-          {
+          if (elist.size() >= 1) {
             Entity target = (Entity)elist.get(0);
-            if ((target instanceof Player))
-            {
-              if (!((Player)target).getName().equals(fHname))
-              {
+            if ((target instanceof Player)) {
+              if (!((Player)target).getName().equals(fHname)) {
                 target.setPassenger(ite);
                 gotTarget = true;
               }
-            }
-            else if (Grenade.this.plugin.wu.isValidEntity(target))
-            {
+            } else if (Grenade.this.plugin.wu.isValidEntity(target)) {
               target.setPassenger(ite);
               gotTarget = true;
             }
@@ -193,20 +170,16 @@ public class Grenade
     }, 1L);
   }
   
-  private void explode(Item ite)
-  {
+  private void explode(Item ite) {
     Location loc = ite.getLocation();
     ite.remove();
     loc.getWorld().createExplosion(loc, 0.0F);
     List<Entity> elist = ite.getNearbyEntities(this.range, this.range, this.range);
-    for (int t = 0; t < elist.size(); t++)
-    {
+    for (int t = 0; t < elist.size(); t++) {
       Entity n = (Entity)elist.get(t);
       boolean damage = true;
-      if ((n instanceof Player))
-      {
-        if ((this.plugin.noPvpDisabled) && (this.plugin.hasWorldGuard))
-        {
+      if ((n instanceof Player)) {
+        if ((this.plugin.noPvpDisabled) && (this.plugin.hasWorldGuard)) {
           RegionManager rm = this.plugin.getWorldGuard().getRegionManager(ite.getWorld());
           if (!rm.getApplicableRegions(n.getLocation()).allows(DefaultFlag.PVP)) {
             damage = false;
@@ -216,8 +189,7 @@ public class Grenade
           damage = false;
         }
       }
-      if ((this.plugin.wu.isValidEntity(n)) && (damage))
-      {
+      if ((this.plugin.wu.isValidEntity(n)) && (damage)) {
         ((LivingEntity)n).setMetadata("DamagerWeaponName", new FixedMetadataValue(this.plugin, this.name));
         if (this.damage > 0) {
           ((LivingEntity)n).damage(this.damage, this.holder);
@@ -232,10 +204,8 @@ public class Grenade
     }
   }
   
-  private void addPotionEffects(Entity e)
-  {
-    for (String pstr : this.effects)
-    {
+  private void addPotionEffects(Entity e) {
+    for (String pstr : this.effects) {
       String[] split = pstr.split(",");
       String id = split[0];
       int duration = Integer.parseInt(split[1]);
@@ -246,11 +216,9 @@ public class Grenade
     }
   }
   
-  public void refreshItem()
-  {
+  public void refreshItem() {
     String name = "§c§o" + this.name;
-    for (Iterator localIterator = getGrenadeInstances().iterator(); localIterator.hasNext();)
-    {
+    for (Iterator localIterator = getGrenadeInstances().iterator(); localIterator.hasNext();) {
       int a = ((Integer)localIterator.next()).intValue();
       ItemStack i = this.holder.getInventory().getItem(a);
       this.holder.getInventory().setItem(a, this.plugin.wu.rename(this.plugin.wu.setLore(i, this.lore), name));
@@ -258,11 +226,9 @@ public class Grenade
     this.holder.updateInventory();
   }
   
-  private List<Integer> getGrenadeInstances()
-  {
+  private List<Integer> getGrenadeInstances() {
     List<Integer> slots = new ArrayList();
-    for (int i = 0; i <= 35; i++)
-    {
+    for (int i = 0; i <= 35; i++) {
       ItemStack is = this.holder.getInventory().getItem(i);
       if ((is != null) && 
         (is.getTypeId() == this.grenIte.getTypeId()) && (is.getData().getData() == this.grenIte.getData().getData())) {
@@ -272,16 +238,14 @@ public class Grenade
     return slots;
   }
   
-  private void prepareGrenadeItem()
-  {
+  private void prepareGrenadeItem() {
     this.grenIte.setAmount(64);
     ItemMeta im = this.grenIte.getItemMeta();
     im.setDisplayName(this.name);
     this.grenIte.setItemMeta(im);
   }
   
-  private ItemStack getItem(String istr)
-  {
+  private ItemStack getItem(String istr) {
     String[] split = istr.split(",");
     int id = Integer.parseInt(split[0]);
     byte data = 0;
@@ -291,63 +255,51 @@ public class Grenade
     return new ItemStack(id, 1, data);
   }
   
-  public ItemStack getGrenadeItem()
-  {
+  public ItemStack getGrenadeItem() {
     return this.grenIte;
   }
   
-  public boolean willSmoke()
-  {
+  public boolean willSmoke() {
     return this.smoke;
   }
   
-  public int getDamage()
-  {
+  public int getDamage() {
     return this.damage;
   }
   
-  public List<String> getEffects()
-  {
+  public List<String> getEffects() {
     return this.effects;
   }
   
-  public int getRange()
-  {
+  public int getRange() {
     return this.range;
   }
   
-  public long getCooldown()
-  {
+  public long getCooldown() {
     return this.cooldown;
   }
   
-  public int getExplosionDelay()
-  {
+  public int getExplosionDelay(){
     return this.expDelay;
   }
   
-  public String getName()
-  {
+  public String getName() {
     return this.name;
   }
   
-  public Player getHolder()
-  {
+  public Player getHolder() {
     return this.holder;
   }
   
-  public String getHolderName()
-  {
+  public String getHolderName() {
     return this.hname;
   }
   
-  public boolean isSticky()
-  {
+  public boolean isSticky() {
     return this.sticky;
   }
   
-  public boolean hasSelfImmunity()
-  {
+  public boolean hasSelfImmunity() {
     return this.selfImmunity;
   }
 }

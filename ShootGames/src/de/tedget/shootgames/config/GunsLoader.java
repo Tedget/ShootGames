@@ -11,82 +11,65 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-public class GunsLoader
-{
+public class GunsLoader {
   private YamlConfiguration config;
   private File configFile;
   Plugin plugin;
   
-  public GunsLoader(Plugin main)
-  {
+  public GunsLoader(Plugin main) {
     this.plugin = main;
     load();
   }
   
-  public YamlConfiguration getConfig()
-  {
+  public YamlConfiguration getConfig() {
     return this.config;
   }
   
-  public void save()
-  {
-    try
-    {
+  public void save() {
+    try {
       this.config.save(this.configFile);
     }
-    catch (IOException e)
-    {
+    catch (IOException e) {
       e.printStackTrace();
     }
   }
   
-  public void load()
-  {
+  public void load() {
     this.configFile = new File("plugins/ShootGames/guns.yml");
     if (!this.configFile.exists()) {
-      try
-      {
+      try {
         new File("plugins/ModernWeapons/").mkdirs();
         this.configFile.createNewFile();
         copyResourceYAML(getClass().getResourceAsStream("guns.yml"), this.configFile);
       }
-      catch (IOException e)
-      {
+      catch (IOException e) {
         e.printStackTrace();
       }
     }
     this.config = new YamlConfiguration();
-    try
-    {
+    try {
       this.config.load(this.configFile);
     }
-    catch (IOException e)
-    {
+    catch (IOException e) {
       e.printStackTrace();
     }
-    catch (InvalidConfigurationException e)
-    {
+    catch (InvalidConfigurationException e) {
       e.printStackTrace();
     }
   }
   
-  public void copyResourceYAML(InputStream source, File target)
-  {
+  public void copyResourceYAML(InputStream source, File target) {
     BufferedWriter writer = null;
     BufferedReader reader = new BufferedReader(new InputStreamReader(source));
-    try
-    {
+    try {
       writer = new BufferedWriter(new FileWriter(target));
     }
-    catch (IOException e)
-    {
+    catch (IOException e) {
       e.printStackTrace();
     }
-    try
-    {
+    try {
       String buffer = "";
-      while ((buffer = reader.readLine()) != null)
-      {
+      while ((buffer = reader.readLine()) != null) {
         writer.write(buffer);
         writer.newLine();
       }
@@ -95,10 +78,8 @@ public class GunsLoader
     {
       e.printStackTrace();
     }
-    finally
-    {
-      try
-      {
+    finally {
+      try {
         if (writer != null) {
           writer.close();
         }
@@ -106,8 +87,7 @@ public class GunsLoader
           reader.close();
         }
       }
-      catch (IOException e)
-      {
+      catch (IOException e) {
         e.printStackTrace();
       }
     }
